@@ -4,8 +4,10 @@ import string
 import datetime
 import pickle
 import json
-import rng_build
 import random
+
+import rng_build
+import overlay
 
 build_file = 'user_builds.pickle'
 try:
@@ -111,6 +113,7 @@ s.send("PASS {0}\r\n".format(TOKEN).encode())
 s.send("NICK {0}\r\n".format(NICK).encode())
 s.send("JOIN {0}\r\n".format(",".join(map(lambda a: "#{0}".format(a), CHANNELS))).encode())
 
+chat_display = overlay.Overlay(400,200)
 readbuffer=""
 while True:
     readbuffer += s.recv(1024).decode()
@@ -130,13 +133,22 @@ while True:
                 if(char != ":"):
                     sender += char
             channel = parts[2]
-            command = commands.get(parts[3].replace(":!", ''), None)
+
+            message = ' '.join([
+                parts[3].replace(':', ''),
+                ' '.join(parts[4:])
+            ])
+
+            chat_display.update(sender, message)
+
+            command = parts[3].replace(":!", '')
+            command = commands.get(command, None)
             if command:
                 try:
                     response = command(sender, *parts[4:])
                     msg = "PRIVMSG {0} :{1}\r\n".format(channel, response)
-                #except:
-                #    msg = "PRIVMSG {0} :wtf is going on here DansGame\r\n".format(channel)
+                except:
+                    msg = "PRIVMSG {0} :wtf is going on here DansGame\r\n".format(channel)
                 finally:
                     s.send(msg.encode())
         print(line)
