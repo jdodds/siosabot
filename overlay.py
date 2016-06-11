@@ -2,10 +2,12 @@ from tkinter import *
 import threading
 
 class Overlay(threading.Thread):
-    def __init__(self, width, height):
+    def __init__(self, width, height, xpos, ypos):
         threading.Thread.__init__(self)
         self.width = width
         self.height = height
+        self.xpos = xpos
+        self.ypos = ypos
         self.start()
 
     def die(self):
@@ -13,6 +15,8 @@ class Overlay(threading.Thread):
 
     def run(self):
         self.root = Tk()
+        self.root.geometry("%dx%d+%d+%d" % (self.width, self.height, 
+                                            self.xpos, self.ypos))
         self.root.protocol('WM_DELETE_WINDOW', self.die)
         self.root.resizable(width=False, height=False)
         self.root.overrideredirect(1)
