@@ -113,7 +113,7 @@ s.send("PASS {0}\r\n".format(TOKEN).encode())
 s.send("NICK {0}\r\n".format(NICK).encode())
 s.send("JOIN {0}\r\n".format(",".join(map(lambda a: "#{0}".format(a), CHANNELS))).encode())
 
-chat_display = overlay.Overlay(width=420, height=230, xpos=0, ypos=120)
+chat_display = overlay.Overlay(width=380, height=135, xpos=480, ypos=735)
 readbuffer=""
 while True:
     readbuffer += s.recv(1024).decode()
