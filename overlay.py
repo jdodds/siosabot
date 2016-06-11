@@ -1,8 +1,36 @@
 from tkinter import *
 import threading
+import random
 import win32api
 import win32con
 import pywintypes
+
+class UserColor:
+    def __init__(self):
+        self.colors = [
+            '#0000ff',
+            '#ff7f50',
+            '#1e90ff',
+            '#00ff7f',
+            '#9acd32',
+            '#00ff00',
+            '#ff4500',
+            '#ff0000',
+            '#daa520',
+            '#ff69b4',
+            '#5f9ea0',
+            '#2e8b57',
+            '#d2691e',
+            '#8a2be2',
+            '#b22222',
+        ]
+        self.user_colors = {}
+
+    def color(self, user):
+        if not user in self.user_colors:
+            self.user_colors[user] = random.choice(self.colors)
+        return self.user_colors[user]
+
 
 class Overlay(threading.Thread):
     def __init__(self, width, height, xpos, ypos):
@@ -11,6 +39,7 @@ class Overlay(threading.Thread):
         self.height = height
         self.xpos = xpos
         self.ypos = ypos
+        self.user_colors = UserColor()
         self.start()
 
     def die(self):
@@ -18,7 +47,7 @@ class Overlay(threading.Thread):
 
     def run(self):
         self.root = Tk()
-        self.root.geometry("%dx%d+%d+%d" % (self.width, self.height, 
+        self.root.geometry("%dx%d+%d+%d" % (self.width, self.height,
                                             self.xpos, self.ypos))
         self.root.protocol('WM_DELETE_WINDOW', self.die)
         self.root.resizable(width=False, height=False)
@@ -45,6 +74,9 @@ class Overlay(threading.Thread):
         if self.text.index('end-1c') != '1.0':
             self.text.insert('end', '\n')
         self.text.insert('end', "{0}: {1}".format(user, msg))
+        color = self.user_colors.color(user)
+        self.text.tag_config(user, foreground=color, relief=RAISED)
+        self.text.tag_add(user, 'end-1l', 'end-1l wordend')
         self.text.see('end')
         self.text['state'] = 'disabled'
 
