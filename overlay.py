@@ -1,5 +1,8 @@
 from tkinter import *
 import threading
+import win32api
+import win32con
+import pywintypes
 
 class Overlay(threading.Thread):
     def __init__(self, width, height, xpos, ypos):
@@ -27,9 +30,13 @@ class Overlay(threading.Thread):
             '-topmost', True,
             '-disabled', True,
         )
-        self.root.focusmodel('passive')
+
         self.text = Text(self.root, bg='black', fg='white', state='disabled')
         self.text.pack()
+        self.root.lift()
+        hWindow = pywintypes.HANDLE(int(self.root.frame(), 16))
+        exStyle = win32con.WS_EX_LAYERED | win32con.WS_EX_TRANSPARENT | win32con.WS_EX_NOACTIVATE
+        win32api.SetWindowLong(hWindow, win32con.GWL_EXSTYLE, exStyle)
         self.root.mainloop()
 
     def update(self, user, msg):
