@@ -61,6 +61,7 @@ class Overlay(threading.Thread):
         )
 
         self.text = Text(self.root, bg='black', fg='white', state='disabled')
+        self.text.configure(font=('Helvetica', 10, 'bold'))
         self.text.pack()
         self.root.lift()
         hWindow = pywintypes.HANDLE(int(self.root.frame(), 16))
