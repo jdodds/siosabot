@@ -31,11 +31,10 @@ class Overlay(threading.Thread):
     def update(self, user, msg):
         numlines = int(float(self.text.index('end - 1 line')))
         self.text['state'] = 'normal'
-        if numlines == self.height:
-            self.text.delete(1.0, 2.0)
         if self.text.index('end-1c') != '1.0':
             self.text.insert('end', '\n')
         self.text.insert('end', "{0}: {1}".format(user, msg))
+        self.text.see('end')
         self.text['state'] = 'disabled'
 
 
