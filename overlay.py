@@ -1,3 +1,4 @@
+from collections import defaultdict
 from tkinter import *
 import threading
 import random
@@ -5,9 +6,15 @@ import win32api
 import win32con
 import pywintypes
 
-class UserColor:
-    def __init__(self):
-        self.colors = [
+class Overlay(threading.Thread):
+    def __init__(self, width, height, xpos, ypos):
+        threading.Thread.__init__(self)
+        self.width = width
+        self.height = height
+        self.xpos = xpos
+        self.ypos = ypos
+
+        username_colors = [
             '#0000ff',
             '#ff7f50',
             '#1e90ff',
@@ -24,22 +31,8 @@ class UserColor:
             '#8a2be2',
             '#b22222',
         ]
-        self.user_colors = {}
+        self.color_for = defaultdict(lambda: random.choice(username_colors))
 
-    def color(self, user):
-        if not user in self.user_colors:
-            self.user_colors[user] = random.choice(self.colors)
-        return self.user_colors[user]
-
-
-class Overlay(threading.Thread):
-    def __init__(self, width, height, xpos, ypos):
-        threading.Thread.__init__(self)
-        self.width = width
-        self.height = height
-        self.xpos = xpos
-        self.ypos = ypos
-        self.user_colors = UserColor()
         self.start()
 
     def die(self):
@@ -75,7 +68,7 @@ class Overlay(threading.Thread):
         if self.text.index('end-1c') != '1.0':
             self.text.insert('end', '\n')
         self.text.insert('end', "{0}: {1}".format(user, msg))
-        color = self.user_colors.color(user)
+        color = self.color_for[user]
         self.text.tag_config(user, foreground=color, relief=RAISED)
         self.text.tag_add(user, 'end-1l', 'end-1l wordend')
         self.text.see('end')
