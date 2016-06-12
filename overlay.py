@@ -63,7 +63,6 @@ class Overlay(threading.Thread):
         self.root.mainloop()
 
     def update(self, user, msg):
-        numlines = int(float(self.text.index('end - 1 line')))
         self.text['state'] = 'normal'
         if self.text.index('end-1c') != '1.0':
             self.text.insert('end', '\n')
@@ -73,7 +72,3 @@ class Overlay(threading.Thread):
         self.text.tag_add(user, 'end-1l', 'end-1l wordend')
         self.text.see('end')
         self.text['state'] = 'disabled'
-
-
-if __name__ == '__main__':
-    o = Overlay()
