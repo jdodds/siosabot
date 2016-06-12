@@ -57,18 +57,24 @@ class Overlay(threading.Thread):
         self.text.configure(font=('Helvetica', 10, 'bold'))
         self.text.pack()
         self.root.lift()
+
+        # tell Windows(tm) to allow clicks to pass through our overlay.
         hWindow = pywintypes.HANDLE(int(self.root.frame(), 16))
         exStyle = win32con.WS_EX_LAYERED | win32con.WS_EX_TRANSPARENT | win32con.WS_EX_NOACTIVATE
         win32api.SetWindowLong(hWindow, win32con.GWL_EXSTYLE, exStyle)
+
         self.root.mainloop()
 
     def update(self, user, msg):
         self.text['state'] = 'normal'
+
         if self.text.index('end-1c') != '1.0':
             self.text.insert('end', '\n')
         self.text.insert('end', "{0}: {1}".format(user, msg))
+
         color = self.color_for[user]
         self.text.tag_config(user, foreground=color, relief=RAISED)
         self.text.tag_add(user, 'end-1l', 'end-1l wordend')
+
         self.text.see('end')
         self.text['state'] = 'disabled'
