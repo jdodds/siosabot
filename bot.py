@@ -138,8 +138,9 @@ while True:
                 parts[3].replace(':', ''),
                 ' '.join(parts[4:])
             ])
-
-            chat_display.update(sender, message)
+            
+            if hasattr(chat_display, 'text'):
+                chat_display.update(sender, message)
 
             command = parts[3].replace(":!", '')
             command = commands.get(command, None)
